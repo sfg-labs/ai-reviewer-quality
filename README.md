@@ -6,13 +6,12 @@ Consumed as a GitHub Action from any `sfg-labs` repo.
 
 ## What it does
 
-On every PR (non-draft), this action:
+Deterministic-only, no API key needed. On every PR (non-draft), this action:
 
 1. Fetches the diff via the GitHub API
 2. Runs **eslint**, **ts-prune**, **jscpd**, and **markdownlint** scoped to changed lines
-3. Asks **Claude Sonnet 4.6** to reason about SOLID, naming, missing tests, accessibility, and TODO ownership
-4. Aggregates + dedupes findings, honors `// ai-review-ignore: <RULE_ID>` suppression comments
-5. Posts a single review with inline comments — **always COMMENT, never blocks merge**
+3. Aggregates + dedupes findings, honors `// ai-review-ignore: <RULE_ID>` suppression comments
+4. Posts a single review with inline comments — **always COMMENT, never blocks merge**
 
 ## Use it
 
@@ -21,8 +20,7 @@ In any repo's `.github/workflows/ai-review.yml`:
 ```yaml
 - uses: sfg-labs/ai-reviewer-quality@main
   with:
-    anthropic-api-key: ${{ secrets.ANTHROPIC_API_KEY }}
-    github-token:      ${{ secrets.GITHUB_TOKEN }}
+    github-token: ${{ secrets.GITHUB_TOKEN }}
 ```
 
 See [`docs/INSTALL.md`](docs/INSTALL.md) for the 3-step install.

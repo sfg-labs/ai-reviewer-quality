@@ -17,15 +17,6 @@ jest.mock('@octokit/rest', () => ({
   })),
 }));
 
-// Mock Anthropic SDK so the runner never tries a real network call.
-jest.mock('@anthropic-ai/sdk', () => {
-  return jest.fn().mockImplementation(() => ({
-    messages: {
-      create: jest.fn().mockResolvedValue({ content: [{ type: 'text', text: '[]' }] }),
-    },
-  }));
-});
-
 // Mock the static analyzers so we don't shell out during tests.
 jest.mock('../src/tools/runner', () => ({
   buildAnalyzers: jest.fn().mockReturnValue([]),
@@ -66,10 +57,8 @@ describe('run (end-to-end)', () => {
 
     process.env.GITHUB_REPOSITORY = 'sfg-labs/nma-india-engine';
     process.env.GITHUB_WORKSPACE = process.cwd();
-    process.env['INPUT_ANTHROPIC-API-KEY'] = 'sk-test';
     process.env['INPUT_GITHUB-TOKEN'] = 'gh_test';
     process.env['INPUT_CONFIG-PATH'] = '.github/ai-review.yml';
-    process.env['INPUT_MODEL'] = 'claude-sonnet-4-6';
     process.env['INPUT_MAX-TOKENS'] = '50000';
     (github as { context: unknown }).context = {
       repo: { owner: 'sfg-labs', repo: 'nma-india-engine' },

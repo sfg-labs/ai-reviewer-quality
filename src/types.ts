@@ -1,14 +1,14 @@
 /**
  * Shared type definitions for the AI quality reviewer.
  *
- * All findings — whether emitted by static analyzers or by the Claude
- * reasoner — converge on the {@link Finding} shape so the aggregator
- * can dedupe, suppress, and post a uniform review.
+ * All findings emitted by static analyzers converge on the
+ * {@link Finding} shape so the aggregator can dedupe, suppress, and
+ * post a uniform review.
  */
 
 export type Severity = 'CRITICAL' | 'HIGH' | 'MEDIUM' | 'LOW';
 export type Verdict = 'APPROVE' | 'COMMENT' | 'REQUEST_CHANGES';
-export type Source = 'eslint' | 'ts-prune' | 'jscpd' | 'markdownlint' | 'claude';
+export type Source = 'eslint' | 'ts-prune' | 'jscpd' | 'markdownlint';
 
 /** A single review finding. */
 export interface Finding {

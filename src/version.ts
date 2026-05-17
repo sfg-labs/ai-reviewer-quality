@@ -11,5 +11,4 @@ export const ANALYZER_VERSIONS: Record<string, string> = {
   'ts-prune': '0.10.3',
   jscpd: '4.0.4',
   markdownlint: '0.34.0',
-  'claude-sonnet-4-6': '2026-03-01',
 };

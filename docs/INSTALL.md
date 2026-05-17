@@ -1,14 +1,9 @@
-# Install — 3 steps
+# Install — 2 steps
 
-## 1. Add `ANTHROPIC_API_KEY` as a repo secret
+Deterministic-only. **No `ANTHROPIC_API_KEY` required** — this action runs
+pure static analysis at $0/PR.
 
-```bash
-gh secret set ANTHROPIC_API_KEY --repo sfg-labs/<your-repo>
-```
-
-`GITHUB_TOKEN` is provided automatically by GitHub Actions — no setup needed.
-
-## 2. Add `.github/workflows/ai-review.yml`
+## 1. Add `.github/workflows/ai-review.yml`
 
 ```yaml
 name: ai-review
@@ -26,13 +21,14 @@ jobs:
         with: { fetch-depth: 0 }
       - uses: sfg-labs/ai-reviewer-quality@main
         with:
-          anthropic-api-key: ${{ secrets.ANTHROPIC_API_KEY }}
-          github-token:      ${{ secrets.GITHUB_TOKEN }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
 ```
+
+`GITHUB_TOKEN` is provided automatically by GitHub Actions — no setup needed.
 
 (If you adopted the `repo-standardizer` scaffold, this file already exists.)
 
-## 3. (Optional) Add `.github/ai-review.yml` for per-repo overrides
+## 2. (Optional) Add `.github/ai-review.yml` for per-repo overrides
 
 ```yaml
 quality:
@@ -51,10 +47,8 @@ That's it. Open a PR — the action runs on push to the PR branch and posts a si
 
 | Input | Required | Default | Notes |
 |---|---|---|---|
-| `anthropic-api-key` | yes | — | Use a GitHub secret. |
 | `github-token` | yes | — | Pass `${{ secrets.GITHUB_TOKEN }}`. |
 | `config-path` | no | `.github/ai-review.yml` | Path in the target repo. |
-| `model` | no | `claude-sonnet-4-6` | Override only if escalating ambiguous findings. |
 | `max-tokens` | no | `50000` | Hard cap on input tokens; over budget posts a polite skip comment. |
 
 ## Outputs
@@ -68,4 +62,4 @@ That's it. Open a PR — the action runs on push to the PR branch and posts a si
 
 - **"PR exceeds the 50000-token budget"** — split the PR into smaller pieces, or bump `max-tokens` in the workflow.
 - **"Quality review disabled via ai-review.yml — skipping."** — your repo set `quality.enabled: false`.
-- **No comments appear** — check that `ANTHROPIC_API_KEY` is set in the repo's Actions secrets and that the PR isn't a draft.
+- **No comments appear** — confirm the PR isn't a draft and the workflow ran on `pull_request`.

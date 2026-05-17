@@ -57,7 +57,7 @@ export function extractChangedLines(patch: string): number[] {
 
 /**
  * Compute a rough token estimate for a list of changed files. Used to
- * enforce the max-tokens budget before invoking the Claude reasoner.
+ * enforce the max-tokens budget so very large PRs get a polite skip.
  *
  * Heuristic: ~4 characters per token, plus 200 tokens overhead per file.
  */

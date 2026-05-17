@@ -27,10 +27,6 @@ src/
     jscpd.ts                  parse jscpd JSON report
     markdownlint.ts           parse markdownlint-cli2 JSON report
     runner.ts                 build + run all analyzers in parallel
-  claude/
-    reasoner.ts               @anthropic-ai/sdk wrapper + JSON parser
-  prompts/
-    system.md                 system prompt for the Claude reasoner
   rule-packs/
     QUAL.<CATEGORY>.NNN.md    one Markdown file per rule
 tests/
@@ -56,15 +52,14 @@ docs/
 ## Adding a new rule
 
 1. Add `src/rule-packs/QUAL.<CATEGORY>.NNN.md` (see existing files for shape).
-2. If Claude-only: add the new id to `VALID_RULE_IDS` in `src/claude/reasoner.ts` and mention it in `src/prompts/system.md`.
-3. If analyzer-driven: emit the rule_id from the corresponding `src/tools/*.ts` parser.
-4. Add at least one fixture under `tests/fixtures/` and a test in `tests/`.
-5. Bump `RULE_PACK_VERSION` in `src/version.ts` if the rule changes existing behaviour.
-6. `npm test && npm run build` then commit.
+2. Emit the rule_id from the corresponding `src/tools/*.ts` analyzer parser (deterministic-only — no LLM).
+3. Add at least one fixture under `tests/fixtures/` and a test in `tests/`.
+4. Bump `RULE_PACK_VERSION` in `src/version.ts` if the rule changes existing behaviour.
+5. `npm test && npm run build` then commit.
 
 ## Don'ts
 
 - Don't import `package.json` from runtime code (breaks the ncc bundle).
-- Don't add a network call beyond GitHub API + Anthropic API.
+- Don't add a network call beyond the GitHub API. No LLM API calls — this reviewer is deterministic and free at runtime.
 - Don't run real analyzers in this repo's own CI (would be recursive). Mock them in tests.
 - Don't bump verdict severity logic — quality is advisory.

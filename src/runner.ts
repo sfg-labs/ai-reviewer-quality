@@ -6,7 +6,6 @@ import { fetchChangedFiles, estimateTokens } from './github/pr-diff';
 import { buildInlineComments, postInlineReview } from './github/post-inline';
 import { renderSummary } from './github/post-summary';
 import { buildAnalyzers, runAllAnalyzers } from './tools/runner';
-import { reason } from './claude/reasoner';
 import { applyConfig, applySuppressions, capFindingsPerFile, computeVerdict, dedupeFindings } from './aggregator';
 import { ReviewBundle } from './types';
 import { ANALYZER_VERSIONS, RULE_PACK_VERSION } from './version';
@@ -14,13 +13,14 @@ import { ANALYZER_VERSIONS, RULE_PACK_VERSION } from './version';
 /**
  * Main entry point for the GitHub Action. Wires the inputs to the
  * pipeline and posts a single review at the end.
+ *
+ * Deterministic-only: no LLM API call is made; static analyzers are
+ * the sole source of findings.
  */
 export async function run(): Promise<void> {
   try {
-    const apiKey = core.getInput('anthropic-api-key', { required: true });
     const ghToken = core.getInput('github-token', { required: true });
     const configPath = core.getInput('config-path') || '.github/ai-review.yml';
-    const model = core.getInput('model') || 'claude-sonnet-4-6';
     const maxTokens = parseInt(core.getInput('max-tokens') || '50000', 10);
 
     const ctx = github.context;
@@ -61,13 +61,9 @@ export async function run(): Promise<void> {
     }
 
     const analyzers = buildAnalyzers();
-    const [staticFindings, claudeFindings] = await Promise.all([
-      runAllAnalyzers(analyzers, workspace, changed),
-      reason(changed, { apiKey, model, maxTokens: 4096 }),
-    ]);
+    const staticFindings = await runAllAnalyzers(analyzers, workspace, changed);
 
-    const merged = [...staticFindings, ...claudeFindings];
-    const deduped = dedupeFindings(merged);
+    const deduped = dedupeFindings(staticFindings);
     const configured = applyConfig(deduped, config);
     const suppressed = applySuppressions(configured, changed);
     const capped = capFindingsPerFile(suppressed, config.maxFindingsPerFile);
