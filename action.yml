@@ -1,0 +1,40 @@
+name: 'AI Reviewer — Quality'
+description: 'AI PR reviewer for code quality — SOLID, complexity, dead code, clones, naming, docs, missing tests. COMMENT-only, never blocks merge.'
+author: 'sfg-labs'
+branding:
+  icon: 'check-circle'
+  color: 'blue'
+
+inputs:
+  anthropic-api-key:
+    description: 'Anthropic API key (use a GitHub secret).'
+    required: true
+  github-token:
+    description: 'GitHub token (use ${{ secrets.GITHUB_TOKEN }}).'
+    required: true
+  config-path:
+    description: 'Path to ai-review.yml config in the target repo (optional).'
+    required: false
+    default: '.github/ai-review.yml'
+  model:
+    description: 'Claude model name (default: claude-sonnet-4-6).'
+    required: false
+    default: 'claude-sonnet-4-6'
+  max-tokens:
+    description: 'Max input tokens per PR (skip with comment if exceeded).'
+    required: false
+    default: '50000'
+  rule-pack-version:
+    description: 'Rule pack semver (defaults to action package version).'
+    required: false
+    default: ''
+
+outputs:
+  verdict:
+    description: 'Always COMMENT for the quality reviewer (never blocks merge).'
+  finding-count:
+    description: 'Total number of findings emitted (after suppression and dedupe).'
+
+runs:
+  using: 'node20'
+  main: 'dist/index.js'

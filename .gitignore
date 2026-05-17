@@ -1,11 +1,11 @@
 # Build + runtime
 node_modules/
-dist/
 build/
 .next/
 out/
 coverage/
 *.log
+*.tsbuildinfo
 
 # Env
 .env
@@ -21,3 +21,6 @@ coverage/
 *.pem
 !*.pub
 *.key
+
+# NOTE: dist/ is intentionally COMMITTED so GitHub Actions can consume the
+# bundled runner directly via `uses: sfg-labs/ai-reviewer-quality@main`.

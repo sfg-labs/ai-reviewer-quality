@@ -1,0 +1,27 @@
+name: ci
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+      - run: npm install --no-audit --no-fund
+      - run: npm run lint --if-present
+      - run: npm run typecheck --if-present
+      - run: npm test --if-present
+      - name: Verify dist/ is in sync
+        run: |
+          npm run build
+          if ! git diff --quiet dist/; then
+            echo "::error::dist/ is out of date. Run 'npm run build' locally and commit." >&2
+            git diff dist/ | head -100
+            exit 1
+          fi

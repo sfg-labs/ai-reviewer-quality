@@ -1,0 +1,50 @@
+{
+  "name": "@sfg-labs/ai-reviewer-quality",
+  "version": "1.0.0",
+  "description": "AI PR reviewer focused on code quality, SOLID, complexity, dead code, dep hygiene. Consumed as a GitHub Action.",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "ncc build src/runner.ts -o dist --minify --source-map --license licenses.txt",
+    "lint": "eslint 'src/**/*.ts' --max-warnings 0",
+    "test": "jest --coverage",
+    "test:watch": "jest --watch",
+    "typecheck": "tsc --noEmit"
+  },
+  "keywords": [
+    "github-action",
+    "code-review",
+    "ai",
+    "claude",
+    "code-quality"
+  ],
+  "author": "sfg-labs",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/sfg-labs/ai-reviewer-quality.git"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "@actions/core": "^1.10.1",
+    "@actions/github": "^6.0.0",
+    "@anthropic-ai/sdk": "^0.96.0",
+    "@octokit/rest": "^20.1.1",
+    "minimatch": "^9.0.3",
+    "parse-diff": "^0.11.1",
+    "yaml": "^2.4.5"
+  },
+  "devDependencies": {
+    "@types/jest": "^29.5.12",
+    "@types/node": "^20.12.7",
+    "@typescript-eslint/eslint-plugin": "^7.7.1",
+    "@typescript-eslint/parser": "^7.7.1",
+    "@vercel/ncc": "^0.38.1",
+    "eslint": "^8.57.0",
+    "jest": "^29.7.0",
+    "nock": "^13.5.4",
+    "ts-jest": "^29.1.2",
+    "typescript": "^5.4.5"
+  }
+}
